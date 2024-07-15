@@ -26,7 +26,7 @@ const Home = () => {
     "AbsoluteReality",
     "Runwayml",
   ];
-  const [selectedModel, setSelectedModel] = useState("Stable Diffusion");
+  const [selectedModel, setSelectedModel] = useState("Runwayml");
   const [name, setName] = useState("");
   const [prompt, setPrompt] = useState("");
   const [blobData, setBlobData] = useState();
@@ -42,7 +42,6 @@ const Home = () => {
   };
 
   const handleGenerate = async () => {
-    // console.log("generate");
     setLoading(true);
 
     try {
@@ -60,17 +59,16 @@ const Home = () => {
       setBlobData(blob);
 
       const base64Url = await blobToDataURL(blobData);
-      // console.log("url --->  " , url);
       setImageUrl(base64Url);
     } catch (err) {
-      alert(err);
+      alert("Error in Generating Image. Please use another model or try again after some time.");
+      console.log(err);
     } finally {
       setLoading(false);
     }
   };
 
   const handleDownload = () => {
-    console.log("Download");
     if (imageUrl) {
       const link = document.createElement("a");
       link.href = imageUrl;
@@ -84,7 +82,6 @@ const Home = () => {
   };
   
   const handleShare = async() => {
-    console.log("Share");
     if(!name){
       alert("Please enter a name!!");
       return;
@@ -103,15 +100,13 @@ const Home = () => {
       });
       
       if (response.status === 200) {
-        // await response.json()
-        alert('Success');
         navigate('/community');
       } else {
-        alert("Failed to share image.");
+        alert("Failed to share image.Please try again after some time.");
       }
     } catch (error) {
-      console.error("Error sharing image:", error);
-      alert("Error sharing image.");
+      console.error("Error in sharing image:", error);
+      alert("Error in sharing image.Please try again after some time.");
     }
   };
 
@@ -120,6 +115,7 @@ const Home = () => {
       <Navbar btnText="Community" />
 
       {/* Dropdown Menu */}
+      <div>Select a Model</div>
       <PopupState variant="popover" popupId="demo-popup-menu">
         {(popupState) => (
           <>
