@@ -13,7 +13,11 @@ const Navbar = ({ btnText }) => {
         </div>
         <div>
           <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
-            <Link to="/community">{btnText}</Link>
+            {btnText === "Create" ? (
+              <Link to="/">{btnText}</Link>
+            ) : (
+              <Link to="/community">{btnText}</Link>
+            )}
           </button>
         </div>
       </div>
