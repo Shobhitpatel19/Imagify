@@ -3,21 +3,35 @@ import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import PopupState, { bindTrigger, bindMenu } from "material-ui-popup-state";
+import axios from "axios";
+import { useNavigate } from 'react-router-dom';
 
 import Navbar from "../components/Navbar";
+import Loader from "../components/Loader";
 import preview from "../assets/preview.png";
+import { blobToDataURL } from "../utils/blobToDataURL";
+import {
+  AbsoluteReality,
+  playground,
+  runwayml,
+  stableDiffusion,
+} from "../models";
+
 
 const Home = () => {
+  const navigate = useNavigate();
   const models = [
     "Stable Diffusion",
     "Playground AI",
     "AbsoluteReality",
     "Runwayml",
-    "prompthero",
   ];
-  const [selectedOption, setSelectedOption] = useState("Stable Diffusion");
+  const [selectedModel, setSelectedModel] = useState("Stable Diffusion");
   const [name, setName] = useState("");
   const [prompt, setPrompt] = useState("");
+  const [blobData, setBlobData] = useState();
+  const [imageUrl, setImageUrl] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const handleNameChange = (event) => {
     setName(event.target.value);
@@ -27,15 +41,78 @@ const Home = () => {
     setPrompt(event.target.value);
   };
 
-  const handleGenerate = () => {
-    console.log("generate");
+  const handleGenerate = async () => {
+    // console.log("generate");
+    setLoading(true);
+
+    try {
+      let blob;
+      if (selectedModel === "Stable Diffusion") {
+        blob = await stableDiffusion({ inputs: prompt });
+      } else if (selectedModel === "Playground AI") {
+        blob = await playground({ inputs: prompt });
+      } else if (selectedModel === "AbsoluteReality") {
+        blob = await AbsoluteReality({ inputs: prompt });
+      } else {
+        blob = await runwayml({ inputs: prompt });
+      }
+
+      setBlobData(blob);
+
+      const base64Url = await blobToDataURL(blobData);
+      // console.log("url --->  " , url);
+      setImageUrl(base64Url);
+    } catch (err) {
+      alert(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleDownload = () => {
     console.log("Download");
+    if (imageUrl) {
+      const link = document.createElement("a");
+      link.href = imageUrl;
+      link.download = `${name || "generated_image"}.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } else {
+      console.log("No image to download");
+    }
   };
-  const handleShare = () => {
+  
+  const handleShare = async() => {
     console.log("Share");
+    if(!name){
+      alert("Please enter a name!!");
+      return;
+    }
+    if(!prompt){
+      alert("Please enter a prompt!!");
+      return;
+    }
+
+    try {
+      const response = await axios.post('http://localhost:8000/api/v1/post', {
+        name,
+        model: selectedModel,
+        prompt,
+        url: imageUrl,
+      });
+      
+      if (response.status === 200) {
+        // await response.json()
+        alert('Success');
+        navigate('/community');
+      } else {
+        alert("Failed to share image.");
+      }
+    } catch (error) {
+      console.error("Error sharing image:", error);
+      alert("Error sharing image.");
+    }
   };
 
   return (
@@ -47,14 +124,14 @@ const Home = () => {
         {(popupState) => (
           <>
             <Button variant="contained" {...bindTrigger(popupState)}>
-              {selectedOption}
+              {selectedModel}
             </Button>
             <Menu {...bindMenu(popupState)}>
               {models.map((model, index) => (
                 <MenuItem
                   key={index}
                   onClick={() => {
-                    setSelectedOption(model);
+                    setSelectedModel(model);
                     popupState.close();
                   }}
                 >
@@ -105,23 +182,30 @@ const Home = () => {
       </div>
 
       {/* Image Box */}
-      <div className="mt-4">
+      <div className="mt-4 flex justify-center">
         <div className="relative w-64 h-64 bg-gray-200 rounded-md overflow-hidden">
-          <img
-            src={preview} // Ensure 'preview' correctly points to your image path
-            alt="preview"
-            className="absolute inset-0 w-full h-full object-cover opacity-40"
-          />
+          {loading ? (
+            <Loader />
+          ) : (
+            <img
+              src={imageUrl || preview} // Use imageUrl if available, otherwise use preview
+              alt="preview"
+              className="absolute inset-0 w-full h-full object-cover opacity-40"
+            />
+          )}
         </div>
       </div>
 
-        {/* Generate and Download Button */}
+      {/* Generate and Download Button */}
       <div className="mt-4 flex justify-between">
         <button
           onClick={handleGenerate}
           className="px-6 py-3 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
         >
-          Generate
+          {
+            loading ? "Generating..." : "Generate"
+
+          }
         </button>
         <button
           onClick={handleDownload}
