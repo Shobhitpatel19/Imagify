@@ -1,4 +1,5 @@
 export const blobToDataURL = (blob) => {
+  // console.log(blob);
   if (!blob || !(blob instanceof Blob)) {
     return Promise.reject(new Error("Invalid Blob object provided"));
   }
