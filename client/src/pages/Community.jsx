@@ -59,11 +59,11 @@ const Community = () => {
     <>
       <Navbar btnText="Create" />
 
-      <div className="container mx-auto mt-8">
+      <div className="bg-black pb-[16vh]  mx-auto w-full">
         <h2 className="text-2xl font-semibold mb-4">The Community Showcase</h2>
 
-        <div className="mb-6 flex items-center space-x-2">
-          <label htmlFor="search" className="block text-sm font-medium text-gray-700">
+        <div className="mb-10 flex flex-col items-start  px-6">
+          <label htmlFor="search" className="block text-sm font-medium text-blue-700 mb-1">
             Search Posts
           </label>
           <input
@@ -72,7 +72,7 @@ const Community = () => {
             name="search"
             value={searchText}
             onChange={handleSearchChange}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            className="mt-1 block w-[90%] px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             placeholder="Search"
           />
         </div>
@@ -80,11 +80,11 @@ const Community = () => {
         {loading ? (
           <div><Loader/></div>
         ) : (
-          <div>
+          <div className='p-6 flex flex-wrap gap-6 w-full items-center justify-center'>
             {searchedResults.map((post, index) => (
-              <div key={index}>
+              <div className='bg-black' key={index}>
                 {/* Render your posts here */}
-                <Card id={post._id} name={post.name} model={post.model} prompt={post.prompt} image={post.photo}/>
+                <Card  id={post._id} name={post.name} model={post.model} prompt={post.prompt} image={post.photo}/>
               </div>
             ))}
           </div>
