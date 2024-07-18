@@ -37,6 +37,10 @@ const Home = () => {
   };
 
   const handleGenerate = async () => {
+    if(!prompt){
+      alert("Please enter a prompt");
+      return;
+    }
     setLoading(true);
 
     try {
@@ -58,7 +62,7 @@ const Home = () => {
       setImageUrl(dataUrl);
     } catch (err) {
       alert(
-        "Please try again!!"
+        "Please try again or choose another model!!"
       );
       console.log(err);
     } finally {
