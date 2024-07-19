@@ -1,7 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
 import Navbar from "../components/Navbar";
 import Loader from "../components/Loader";
 import preview from "../assets/preview.png";
@@ -24,7 +23,6 @@ const Home = () => {
   const [selectedModel, setSelectedModel] = useState("Runwayml");
   const [name, setName] = useState("");
   const [prompt, setPrompt] = useState("");
-  const [blobData, setBlobData] = useState(null);
   const [imageUrl, setImageUrl] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -44,7 +42,7 @@ const Home = () => {
     setLoading(true);
 
     try {
-      let blob;
+      let blob
       if (selectedModel === "Stable Diffusion") {
         blob = await stableDiffusion({ inputs: prompt });
       } else if (selectedModel === "Playground AI") {
@@ -55,11 +53,13 @@ const Home = () => {
         blob = await runwayml({ inputs: prompt });
       }
 
-      setBlobData(blob);
+      if (!blob || blob.type === "application/json") {
+        alert("Please try again");
+        return Promise.reject(new Error("There is some error from server"));
+      }
 
-
-      const dataUrl = await blobToDataURL(blobData);
-      setImageUrl(dataUrl);
+      const dataUrl = await blobToDataURL(blob);
+      setImageUrl(dataUrl);  
     } catch (err) {
       alert(
         "Please try again or choose another model!!"
@@ -202,7 +202,7 @@ const Home = () => {
               <img
                 src={imageUrl || preview} // Use imageUrl if available, otherwise use preview
                 alt="preview"
-                className="absolute inset-0 w-full h-full object-cover opacity-40"
+                className="absolute inset-0 w-full h-full object-cover opacity-100"
               />
             )}
           </div>
