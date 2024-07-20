@@ -5,6 +5,7 @@ import Navbar from "../components/Navbar";
 import Loader from "../components/Loader";
 import preview from "../assets/preview.png";
 import { blobToDataURL } from "../utils/blobToDataURL";
+import { getRandomPrompt, getRandomJoke } from "../utils/getRandom";
 import {
   AbsoluteReality,
   playground,
@@ -25,6 +26,8 @@ const Home = () => {
   const [prompt, setPrompt] = useState("");
   const [imageUrl, setImageUrl] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [sharing, setSharing] = useState(false);
+  const [joke, setJoke] = useState(null);
 
   const handleNameChange = (event) => {
     setName(event.target.value);
@@ -34,15 +37,20 @@ const Home = () => {
     setPrompt(event.target.value);
   };
 
+  const handleSurpriseMe = () => {
+    const randomPrompt = getRandomPrompt(prompt);
+    setPrompt(randomPrompt);
+  };
+
   const handleGenerate = async () => {
-    if(!prompt){
+    if (!prompt) {
       alert("Please enter a prompt");
       return;
     }
     setLoading(true);
 
     try {
-      let blob
+      let blob;
       if (selectedModel === "Stable Diffusion") {
         blob = await stableDiffusion({ inputs: prompt });
       } else if (selectedModel === "Playground AI") {
@@ -59,11 +67,9 @@ const Home = () => {
       }
 
       const dataUrl = await blobToDataURL(blob);
-      setImageUrl(dataUrl);  
+      setImageUrl(dataUrl);
     } catch (err) {
-      alert(
-        "Please try again or choose another model!!"
-      );
+      alert("Please try again or choose another model!!");
       console.log(err);
     } finally {
       setLoading(false);
@@ -93,6 +99,7 @@ const Home = () => {
       return;
     }
 
+    setSharing(true);
     try {
       const response = await axios.post("http://localhost:8000/api/v1/post", {
         name,
@@ -109,15 +116,24 @@ const Home = () => {
     } catch (error) {
       console.error("Error in sharing image: ", error);
       alert("Failed to share image. Please try again.");
+    } finally {
+      setSharing(false);
     }
+  };
+
+  const handleJokes = () => {
+    setTimeout(() => {
+      const temp = getRandomJoke(joke);
+      setJoke(temp);
+    }, 500);
   };
 
   return (
     <>
       <Navbar btnText="Community" />
 
-      <div className="bg-black min-h-screen">
-        <div className="text-white text-center font-bold text-6xl pt-2 font-light">
+      <div className="bg-black min-h-screen flex flex-col items-center">
+        <div className="text-white text-center font-bold text-6xl pt-8 font-light">
           From{" "}
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-violet-500 to-blue-500">
             Words
@@ -128,69 +144,91 @@ const Home = () => {
           </span>{" "}
           in seconds
         </div>
-        <div className="text-white px-2 pt-8 text-center">
-          Unleash your creativity with Imagify, the powerful tool that transforms your text into beautiful images effortlessly.
+        <div className="text-white px-2 pt-4 text-center">
+          Unleash your creativity with Imagify, the powerful tool that
+          transforms your text into beautiful images effortlessly.
         </div>
 
         {/* Dropdown Menu */}
-        <div className="flex items-center justify-center pt-8 z-50">
-          <div className="relative group">
-            <button className="rounded-lg text-white border-2 border-gray-500 w-52 py-3 px-2 flex justify-between shadow-md">
-              {selectedModel}
-            </button>
-            <ul className="dropdown-menu hidden group-hover:block absolute text-gray-700 pt-1 w-52 z-10">
-              {models.map((model, index) => (
-                <li key={index}>
-                  <a
-                    onClick={() => setSelectedModel(model)}
-                    className="w-full mb-1 rounded-md bg-gray-200 hover:bg-gray-300 py-2 px-4 block whitespace-no-wrap cursor-pointer"
-                    style={{ userSelect: "none" }} // Prevent text selection
-                  >
-                    {model}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
+        <div className="relative group pt-8 z-50">
+          <button className="rounded-lg text-white border-2 border-gray-500 w-52 py-3 px-2 flex justify-between shadow-md">
+            {selectedModel}
+          </button>
+          <ul className="dropdown-menu hidden group-hover:block absolute text-gray-700 pt-1 w-52 z-10">
+            {models.map((model, index) => (
+              <li key={index}>
+                <a
+                  onClick={() => setSelectedModel(model)}
+                  className="w-full mb-1 rounded-md bg-gray-200 hover:bg-gray-300 py-2 px-4 block whitespace-no-wrap cursor-pointer"
+                  style={{ userSelect: "none" }} // Prevent text selection
+                >
+                  {model}
+                </a>
+              </li>
+            ))}
+          </ul>
         </div>
 
-        <div className="flex w-full justify-center flex-col items-center">
+        <div className="flex flex-col items-center w-full px-4">
           {/* Name Input Field */}
-          <div className="w-full flex flex-col items-center mt-4">
-            <input
-              type="text"
+          <div className="w-full max-w-md mt-4">
+            <textarea
               id="name"
               name="name"
               value={name}
               autoComplete="off"
               onChange={handleNameChange}
-              className="block w-1/3 px-3 py-2 border bg-transparent border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-white mt-2"
+              className="custom-scrollbar block w-full px-3 py-2 border bg-transparent border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-white resize-none"
               placeholder="Enter your name"
+              rows="1"
+              spellCheck="false"
+              onInput={(e) => {
+                e.target.style.height = "auto";
+                e.target.style.height = e.target.scrollHeight + "px";
+              }}
             />
           </div>
 
+          {/* Surprise Me Button */}
+          <button
+            onClick={handleSurpriseMe}
+            className="mt-4 px-4 py-2 text-purple-500 border-2 border-violet-600 rounded-md shadow-md hover:bg-purple-900 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50"
+          >
+            Surprise Me
+          </button>
+
           {/* Prompt Input Field */}
-          <div className="w-full flex flex-col items-center mt-4 px-4">
-            <div className="flex w-full items-center justify-center gap-1 mt-2">
-              <input
-                type="text"
+          <div className="w-full max-w-md mt-4">
+            <div className="flex w-full items-center justify-between">
+              <textarea
                 id="prompt"
                 name="prompt"
                 value={prompt}
                 autoComplete="off"
                 onChange={handlePromptChange}
-                className="block w-1/3 px-3 py-2 border bg-transparent border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-white mt-2"
+                className="custom-scrollbar block w-full px-3 py-2 border bg-transparent border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-white resize-none"
                 placeholder="Enter your prompt"
+                rows="1"
+                spellCheck="false"
+                onInput={(e) => {
+                  e.target.style.height = "auto";
+                  e.target.style.height = e.target.scrollHeight + "px";
+                }}
               />
               <button
                 onClick={handleGenerate}
-                className="px-2 py-[5.5px] text-blue-500 hover:bg-blue-900 uppercase border-blue-600 border-2 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                className="ml-2 px-4 py-2 text-blue-500 border-2 border-blue-600 rounded-lg shadow-md hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
                 disabled={loading}
               >
                 {loading ? "Generating..." : "Generate"}
               </button>
             </div>
           </div>
+        </div>
+
+        {/* Jokes Section */}
+        <div className="flex flex-col items-center justify-center w-full max-w-md mt-4">
+          <h1 className="text-2xl font-bold text-white">Jokes</h1>
         </div>
 
         {/* Image Box */}
@@ -202,28 +240,27 @@ const Home = () => {
               <img
                 src={imageUrl || preview} // Use imageUrl if available, otherwise use preview
                 alt="preview"
-                className="absolute inset-0 w-full h-full object-cover opacity-100"
+                className="absolute inset-0 w-full h-full object-cover"
               />
             )}
           </div>
         </div>
-        <div className="flex items-center justify-center gap-1 pb-10 mt-4">
+
+        <div className="flex items-center justify-center gap-4 pb-10 mt-4">
           {/* Download Button */}
-          <div className="text-center">
-            <button
-              onClick={handleDownload}
-              className="px-2 py-2 text-green-500 border-2 border-green-700 rounded-md shadow-md hover:bg-green-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
-            >
-              Download
-            </button>
-          </div>
+          <button
+            onClick={handleDownload}
+            className="px-4 py-2 text-green-500 border-2 border-green-700 rounded-md shadow-md hover:bg-green-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
+          >
+            Download
+          </button>
 
           {/* Share Button */}
           <button
             onClick={handleShare}
-            className="px-2 py-2 text-purple-500 border-2 border-violet-600 rounded-md shadow-md hover:bg-purple-900 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50"
+            className="px-4 py-2 text-purple-500 border-2 border-violet-600 rounded-md shadow-md hover:bg-purple-900 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50"
           >
-            Share with Community
+            {sharing ? "Sharing, please wait..." : "Share with community"}
           </button>
         </div>
       </div>
