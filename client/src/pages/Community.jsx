@@ -32,7 +32,7 @@ const Community = () => {
     setLoading(true);
 
     try {
-      const response = await axios.get("http://localhost:8000/api/v1/post", {
+      const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/v1/post`, {
         headers: {
           "Content-Type": "application/json",
         },

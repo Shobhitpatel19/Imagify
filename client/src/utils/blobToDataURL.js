@@ -1,6 +1,4 @@
 export const blobToDataURL = (blob) => {
-  // Check if the blob is valid
-  console.log("Function me aane wala blob :-   ", blob);
   if (!blob || !(blob instanceof Blob) || blob.size === 0) {
     return Promise.reject(new Error("Invalid or empty Blob object provided"));
   }

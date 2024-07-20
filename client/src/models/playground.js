@@ -4,7 +4,7 @@ import axios from 'axios';
 async function playground(data) {
   try {
     const response = await axios.post(
-      'https://api-inference.huggingface.co/models/playgroundai/playground-v2-1024px-aesthetic',
+      `${import.meta.env.VITE_PLAYGROUND_URL}`,
       data,
       {
         headers: {
@@ -14,7 +14,6 @@ async function playground(data) {
         responseType: 'blob' 
       }
     );
-    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error('Error in playground:', error);

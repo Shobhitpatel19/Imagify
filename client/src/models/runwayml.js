@@ -3,7 +3,7 @@
 async function runwayml(data) {
   try {
     const response = await fetch(
-      "https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5",
+      `${import.meta.env.VITE_RUNWAYML_URL}`,
       {
         headers: { Authorization: `Bearer ${import.meta.env.VITE_API_KEY}` },
         method: "POST",
@@ -11,7 +11,6 @@ async function runwayml(data) {
       }
     );
     const result = await response.blob();
-    console.log(result);
     return result;
   } catch (err) {
     console.log(

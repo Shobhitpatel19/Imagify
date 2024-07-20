@@ -4,7 +4,7 @@ import axios from "axios";
 async function stableDiffusion(data) {
   try {
     const response = await axios.post(
-      "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0",
+      `${import.meta.env.VITE_STABLEDIFFUSION_URL}`,
       data,
       {
         headers: {
@@ -15,7 +15,6 @@ async function stableDiffusion(data) {
     );
 
     const result = response.data;
-    console.log(result);
     return result;
   } catch (error) {
     console.log("Error generating image by stable Diffusion: ", error);
