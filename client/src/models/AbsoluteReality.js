@@ -4,11 +4,11 @@ import axios from 'axios';
 async function AbsoluteReality(data) {
   try {
     const response = await axios.post(
-      `${import.meta.env.VITE_ABSOLUTEREALITY_URL}`,
+      'https://api-inference.huggingface.co/models/digiplay/AbsoluteReality_v1.8.1',
       data,
       {
         headers: {
-          Authorization: `Bearer ${import.meta.env.VITE_API_KEY}`,
+          Authorization: 'Bearer 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',
           'Content-Type': 'application/json'
         },
         responseType: 'blob'

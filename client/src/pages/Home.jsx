@@ -101,10 +101,9 @@ const Home = () => {
       return;
     }
 
-    // "http://localhost:8000/api/v1/post"
     setSharing(true);
     try {
-      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/v1/post`, {
+      const response = await axios.post("https://imagify-backend.onrender.com/api/v1/post", {
         name,
         model: selectedModel,
         prompt,
@@ -165,55 +164,55 @@ const Home = () => {
             transforms your text into beautiful images effortlessly.
           </div>
 
-          
-
           {/*  Dropdown menu  */}
           <div className="relative w-44">
-      <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-        Select Model
-      </label>
-      <button
-        onClick={toggleDropdown}
-        className="w-full px-4 py-2 text-white bg-blue-500 rounded-lg flex items-center justify-between"
-      >
-        {selectedModel || 'Toggle Dropdown'}
-        <svg
-          className={`w-2.5 h-2.5 transition-transform duration-300 ${isOpen ? 'rotate-180' : 'rotate-0'}`}
-          aria-hidden="true"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 10 6"
-        >
-          <path
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="m1 1 4 4 4-4"
-          />
-        </svg>
-      </button>
+            <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+              Select Model
+            </label>
+            <button
+              onClick={toggleDropdown}
+              className="w-full px-4 py-2 text-white bg-blue-500 rounded-lg flex items-center justify-between"
+            >
+              {selectedModel || "Toggle Dropdown"}
+              <svg
+                className={`w-2.5 h-2.5 transition-transform duration-300 ${
+                  isOpen ? "rotate-180" : "rotate-0"
+                }`}
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 10 6"
+              >
+                <path
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="m1 1 4 4 4-4"
+                />
+              </svg>
+            </button>
 
-      {isOpen && (
-        <div
-          id="dropdownMenu"
-          className="absolute z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-full dark:bg-gray-700"
-        >
-          <ul className="py-2 text-sm text-gray-700 dark:text-gray-200">
-            {models.map((model, index) => (
-              <li key={index}>
-                <a
-                  onClick={() => handleItemClick(model)}
-                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                >
-                  {model}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-    </div>
+            {isOpen && (
+              <div
+                id="dropdownMenu"
+                className="absolute z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-full dark:bg-gray-700"
+              >
+                <ul className="py-2 text-sm text-gray-700 dark:text-gray-200">
+                  {models.map((model, index) => (
+                    <li key={index}>
+                      <a
+                        onClick={() => handleItemClick(model)}
+                        className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                      >
+                        {model}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
 
           {/* Name Input Field */}
           <div className="flex flex-col items-center w-full px-4">

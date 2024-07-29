@@ -4,11 +4,11 @@ import axios from "axios";
 async function stableDiffusion(data) {
   try {
     const response = await axios.post(
-      `${import.meta.env.VITE_STABLEDIFFUSION_URL}`,
+      'https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0',
       data,
       {
         headers: {
-          Authorization: `Bearer ${import.meta.env.VITE_API_KEY}`,
+          Authorization: 'Bearer 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',
         },
         responseType: "blob", 
       }
