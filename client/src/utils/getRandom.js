@@ -9,12 +9,27 @@ export function getRandomPrompt(prompt) {
   return randomPrompt;
 }
 
-export function getRandomJoke(joke) {
-  const randomIndex = Math.floor(Math.random() * surpriseMeJokes.length);
-  const randomJoke = surpriseMeJokes[randomIndex];
+const recentJokes = [];
+const MAX_RECENT_JOKES = 40;
 
-  if (randomJoke === joke) return getRandomJoke(joke);
+export function getRandomJoke() {
+  let randomJoke;
+
+  // Ensure the new joke is not in the list of recent jokes
+  do {
+    const randomIndex = Math.floor(Math.random() * surpriseMeJokes.length);
+    randomJoke = surpriseMeJokes[randomIndex];
+  } while (recentJokes.includes(randomJoke));
+
+  // Add the new joke to the recent jokes queue
+  recentJokes.push(randomJoke);
+
+  // Remove the oldest joke if the queue exceeds the max size
+  if (recentJokes.length > MAX_RECENT_JOKES) {
+    recentJokes.shift();
+  }
 
   return randomJoke;
 }
+
 

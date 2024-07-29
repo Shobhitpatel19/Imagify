@@ -127,9 +127,9 @@ const Community = () => {
   )}
 </div>
 
-<div class="lshadow absolute w-[300px] h-[400px] bg-pink-500 top-[5%] left-[-10%] rounded-[50%] blur-[150px] max-sm:left-[-50%]"></div>
-      <div class="lshadow absolute w-[300px] h-[400px] bg-green-500 top-[5%] right-[-10%] rounded-[50%] blur-[150px] max-sm:right-[-50%]"></div>
-      <div class="lshadow absolute w-[50%] h-[40%] bg-blue-500 top-[-40%] left-[25%] rounded-[50%] blur-[150px] "></div>
+<div className="lshadow absolute w-[300px] h-[400px] bg-pink-500 top-[5%] left-[-10%] rounded-[50%] blur-[150px] max-sm:left-[-50%]"></div>
+      <div className="lshadow absolute w-[300px] h-[400px] bg-green-500 top-[5%] right-[-10%] rounded-[50%] blur-[150px] max-sm:right-[-50%]"></div>
+      <div className="lshadow absolute w-[50%] h-[40%] bg-blue-500 top-[-40%] left-[25%] rounded-[50%] blur-[150px] "></div>
       </div>
      
     </>
