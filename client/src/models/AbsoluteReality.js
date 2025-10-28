@@ -8,7 +8,7 @@ async function AbsoluteReality(data) {
       data,
       {
         headers: {
-          Authorization: 'Bearer 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',
+          Authorization: 'Bearer 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',
           'Content-Type': 'application/json'
         },
         responseType: 'blob'
