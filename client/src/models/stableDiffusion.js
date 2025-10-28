@@ -8,7 +8,7 @@ async function stableDiffusion(data) {
       data,
       {
         headers: {
-          Authorization: 'Bearer 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',
+          Authorization: 'Bearer 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',
         },
         responseType: "blob", 
       }
