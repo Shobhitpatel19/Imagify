@@ -5,7 +5,7 @@ async function runwayml(data) {
     const response = await fetch(
       'https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5',
       {
-        headers: { Authorization: 'Bearer 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' },
+        headers: { Authorization: 'Bearer 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' },
         method: "POST",
         body: JSON.stringify(data),
       }
